@@ -12,8 +12,7 @@ public class TC001_AccountRegistrationTest extends BaseClass {
 
 	@Test
 	void verify_account_registration() {
-		test = extent.createTest("Verify Account Registration");
-		test.log(Status.INFO, "Navigated to Magento website");
+		
 		AccountRegistrationPage regpage = new AccountRegistrationPage(driver);
 		regpage.navigateToCreateAccount();
 		regpage.setFirstName(TestData.FIRST_NAME);
