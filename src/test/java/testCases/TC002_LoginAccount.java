@@ -8,7 +8,7 @@ import utilities.TestData;
 public class TC002_LoginAccount extends BaseClass {
 
 	@Test
-	void verify_account_registration() {
+	void verify_account_signin() {
 
 		LoginAccountPage signIn = new LoginAccountPage(driver);
 		signIn.navigateToSignIn();
