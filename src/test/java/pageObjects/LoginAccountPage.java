@@ -14,21 +14,25 @@ public class LoginAccountPage extends BasePage {
 		super(driver);
 
 	}
+	// Locators
 
 	@FindBy(xpath = "//div[@class='panel header']//a[contains(text(),'Sign In')]")
-	WebElement SignInCTA;
+	private WebElement SignInCTA;
 
 	@FindBy(xpath = "//input[@id='email']")
-	WebElement EnterEmail;
+	private WebElement EnterEmail;
 
 	@FindBy(xpath = "//input[@title='Password']")
-	WebElement EnterPassword;
+	private WebElement EnterPassword;
 
 	@FindBy(xpath = "//button[@class='action login primary']")
-	WebElement SignInButton;
+	private WebElement SignInButton;
+
+	@FindBy(xpath = "//div[@class='message-error error message']")
+	private WebElement errorMsg;
 
 	@FindBy(xpath = "//span[@class='base']")
-	WebElement CinfirmationSignInMsg;
+	private WebElement ConfirmationSignInMsg;
 
 	public void navigateToSignIn() {
 		SignInCTA.click();
@@ -53,11 +57,41 @@ public class LoginAccountPage extends BasePage {
 		return driver.getTitle();
 	}
 
-	public String getConfirmationSignInMsg() {
+	public boolean isSignInErrorDisplayed() {
 		try {
-			return (CinfirmationSignInMsg.getText());
+			// Wait for the confirmation message to appear
+			new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(errorMsg));
+			return errorMsg.isDisplayed();
 		} catch (Exception e) {
-			return (e.getMessage());
+			// If confirmation message is not found, return false
+			return false;
+		}
+	}
+
+	public String getSignInErrorMessage() {
+		return errorMsg.getText();
+	}
+
+	public boolean isSignInSuccessful() {
+		try {
+			// Wait for the confirmation message to appear
+			new WebDriverWait(driver, Duration.ofSeconds(10))
+					.until(ExpectedConditions.visibilityOf(ConfirmationSignInMsg));
+			return ConfirmationSignInMsg.isDisplayed();
+		} catch (Exception e) {
+			// If confirmation message is not found, return false
+			return false;
+		}
+	}
+
+	public boolean isRedirectedToAccountDashboard() {
+		try {
+			// Wait for the URL to indicate successful login
+			new WebDriverWait(driver, Duration.ofSeconds(10))
+					.until(ExpectedConditions.urlContains("customer/account/"));
+			return driver.getCurrentUrl().contains("customer/account/");
+		} catch (Exception e) {
+			return false;
 		}
 	}
 

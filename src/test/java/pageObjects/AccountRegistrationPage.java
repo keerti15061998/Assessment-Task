@@ -14,36 +14,40 @@ public class AccountRegistrationPage extends BasePage {
 		super(driver);
 
 	}
+	// Locators
 
 	@FindBy(xpath = "//a[contains(text(),'Create an Account')]")
-	WebElement createAccountCTA;
+	private WebElement createAccountCTA;
 
 	@FindBy(xpath = "//input[@id='firstname']")
-	WebElement txtFirstName;
+	private WebElement txtFirstName;
 
 	@FindBy(xpath = "//input[@id='lastname']")
-	WebElement txtLastName;
+	private WebElement txtLastName;
 
 	@FindBy(xpath = "//input[@id='email_address']")
-	WebElement txtEmail;
+	private WebElement txtEmail;
 
 	@FindBy(xpath = "//input[@id='password']")
-	WebElement txtPassword;
+	private WebElement txtPassword;
 
 	@FindBy(xpath = "//input[@id='password-confirmation']")
-	WebElement txtCnfPassword;
+	private WebElement txtCnfPassword;
 
 	@FindBy(xpath = "//button[@title='Create an Account']")
-	WebElement btnCreateAnAccount;
+	private WebElement btnCreateAnAccount;
 
 	@FindBy(xpath = "//div[@class='message-success success message']")
-	WebElement Confirmationmsg;
-	
-	
+	private WebElement Confirmationmsg;
+
+	@FindBy(xpath = "//div[@class='message-error error message']")
+	private WebElement errorMsg;
+
+	// Actions
 	public void navigateToCreateAccount() {
 		createAccountCTA.click();
 		new WebDriverWait(driver, Duration.ofSeconds(10))
-        .until(ExpectedConditions.urlContains("customer/account/create/"));
+				.until(ExpectedConditions.urlContains("customer/account/create/"));
 	}
 
 	public void setFirstName(String fname) {
@@ -70,11 +74,29 @@ public class AccountRegistrationPage extends BasePage {
 		btnCreateAnAccount.click();
 	}
 
+	// Validations
 	public String getConfirmationMsg() {
 		try {
 			return (Confirmationmsg.getText());
 		} catch (Exception e) {
-			return (e.getMessage());
+			return null;
+		}
+	}
+
+	public boolean isErrorDisplayed() {
+		try {
+			new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(errorMsg));
+			return errorMsg.isDisplayed();
+		} catch (Exception e) {
+			return false; // Return false if no error message is found
+		}
+	}
+
+	public String getErrorMsg() {
+		try {
+			return errorMsg.getText();
+		} catch (Exception e) {
+			return null; // Return null if error message is not found
 		}
 	}
 
