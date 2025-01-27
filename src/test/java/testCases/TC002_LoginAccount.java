@@ -3,6 +3,7 @@ package testCases;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pageObjects.LoginAccountPage;
+import utilities.ExtentReportManager;
 import utilities.TestData;
 
 public class TC002_LoginAccount extends BaseClass {
@@ -12,37 +13,31 @@ public class TC002_LoginAccount extends BaseClass {
 
 		// Instantiate the LoginAccountPage object
 		LoginAccountPage signIn = new LoginAccountPage(driver);
+		test = ExtentReportManager.createTest("Login Test");
 
-		// Navigate to the Sign In page
-		signIn.navigateToSignIn();
+		try {
+			signIn.navigateToSignIn();
+			test.info("Navigated to Sign In Page");
 
-		// Enter login credentials
-		signIn.Email(TestData.LOGIN_EMAIL);
-		signIn.Password(TestData.LOGIN_PASSWORD);
+			signIn.Email(TestData.LOGIN_EMAIL);
+			signIn.Password(TestData.LOGIN_PASSWORD);
+			signIn.clickSignIN();
+			test.info("Entered credentials and clicked Sign In");
 
-		// Click the Sign In button
-		signIn.clickSignIN();
-
-		// Validate login outcome
-		if (signIn.isSignInErrorDisplayed()) {
-			// Handle login failure
-			String errorMessage = signIn.getSignInErrorMessage();
-			System.out.println("Login failed for registered user!");
-			System.out.println("Error message: " + signIn.getSignInErrorMessage());
-			Assert.fail("Login attempt failed for registered user.Error: " + errorMessage);
-		} else {
-			// Check if login is successful
-			boolean isSignInMessageDisplayed = signIn.isSignInSuccessful();
-			boolean isRedirected = signIn.isRedirectedToAccountDashboard();
-
-			if (isSignInMessageDisplayed || isRedirected) {
-				System.out.println("Login successful for registered user!");
+			if (signIn.isSignInErrorDisplayed()) {
+				String errorMsg = signIn.getSignInErrorMessage();
+				test.fail("Login failed with error: " + errorMsg);
+				Assert.fail("Login attempt failed: " + errorMsg);
+			} else if (signIn.isSignInSuccessful()) {
+				test.pass("Login successful for registered user!");
 			} else {
-				System.out.println("Login failed for registered user!");
-				Assert.fail("Login attempt failed for registered user.");
+				test.fail("Login failed: Unexpected state");
+				Assert.fail("Login attempt failed: Unexpected state");
 			}
+
+		} catch (Exception e) {
+			test.fail("Login test failed: " + e.getMessage());
+			Assert.fail("Test failed due to exception: " + e.getMessage());
 		}
-
 	}
-
 }
